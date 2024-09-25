@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>할 일 목록</title>
+</head>
+<body>
+    <h1>할 일 목록</h1>
+    {% for list in lists %}
+        <h2>{{ list.name }}</h2>
+        <ul>
+            {% for task in tasks %}
+                {% if task.list == list %}
+                    <li>
+                        {{ task.title }}
+                        {% if task.due_date %}
+                            (마감일: {{ task.due_date|date:"Y-m-d" }})
+                        {% endif %}
+                        <a href="{% url 'edit_task' task.id %}">수정</a>
+                        <a href="{% url 'delete_task' task.id %}">삭제</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    {% endfor %}
+
+    {% if is_paginated %}
+        <div class="pagination">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">&laquo; 첫 페이지</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">이전</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">다음</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">마지막 페이지 &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
+<a href="{% url 'add_task' %}">새 할 일 추가</a>
+</body>
+</html>
